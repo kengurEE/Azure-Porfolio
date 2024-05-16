@@ -1,0 +1,27 @@
+﻿@using Common.Dtos;
+@{
+    ViewBag.Title = "Health check";
+}
+ 
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td> 
+            </tr>
+        </thead>
+        @foreach (HealthCheckDto hc in ViewBag.HealthChecks)
+        {
+            <tr>
+                <td>@hc.ServiceName</td>
+                <td>@hc.Timestamp.ToString("dd.mm.yyyy HH:MM")</td>
+                <td>@(hc.IsHealth?"Ok":"Nije dostupan")</td>
+            </tr>
+        }
+    </table>
+    <h6>Notification dostupnost: @ViewBag.Notification %</h6>
+    <h6>Portfolio dostupnost: @ViewBag.Portfolio %</h6>
+</div>

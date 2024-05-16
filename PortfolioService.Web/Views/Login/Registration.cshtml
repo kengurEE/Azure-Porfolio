@@ -1,0 +1,51 @@
+<h3>Registracija</h3>
+@using (Html.BeginForm("RegistrationSubmit", "Login", FormMethod.Post, new
+{
+    enctype =
+    "multipart/form-data"
+}))
+{ 
+        <div class="form-group">
+            <label>Ime</label>
+            <input class="form-control" name="firstName">
+        </div>
+        <div class="form-group">
+            <label>Prezime</label>
+            <input class="form-control" name="lastName">
+        </div>
+        <div class="form-group">
+            <label>Adresa</label>
+            <input class="form-control" name="street">
+        </div>
+        <div class="form-group">
+            <label>Broj</label>
+            <input class="form-control" name="number">
+        </div>
+        <div class="form-group">
+            <label>Grad</label>
+            <input class="form-control" name="city">
+        </div>
+        <div class="form-group">
+            <label>Zemlja</label>
+            <input class="form-control" name="Country">
+        </div>
+        <div class="form-group">
+            <label>Telefon</label>
+            <input class="form-control" name="Phone">
+        </div>
+        <div class="form-group">
+            <label>Email adresa</label>
+            <input type="email" class="form-control" name="email">
+        </div>
+        <div class="form-group">
+            <label>Lozinka</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+        <div class="form-group">
+            <label>Slika</label>
+            <input type="file" class="form-control" name="file">
+        </div>
+        <p style="color:red;">@ViewBag.ErrorMessage</p>
+        <button type="submit" class="btn btn-primary">Registracija</button>
+ 
+}
