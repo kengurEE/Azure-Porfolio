@@ -86,7 +86,9 @@
   <ItemGroup>
     <Compile Include="HealthServiceProvider.cs" />
     <Compile Include="JobServer.cs" />
-    <Compile Include="MailStorage.cs" />
+    <Compile Include="Mail.cs" />
+    <Compile Include="MailRepository.cs" />
+    <Compile Include="MailService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HealthCheckRepository.cs" />
     <Compile Include="WorkerRole.cs" />

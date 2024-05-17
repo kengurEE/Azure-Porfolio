@@ -13,7 +13,7 @@ namespace PortfolioService
         private string endPointName = "health-monitoring";
         public JobServer()
         {
-            RoleInstanceEndpoint inputEndPoint = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints[endPointName];
+            RoleInstanceEndpoint inputEndPoint = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["InternalRequest"];
             string endpoint = string.Format("net.tcp://{0}/{1}", inputEndPoint.IPEndpoint, endPointName);
             serviceHost = new ServiceHost(typeof(HealthMonitoring));
             NetTcpBinding binding = new NetTcpBinding();

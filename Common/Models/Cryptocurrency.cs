@@ -9,7 +9,6 @@ namespace Common.Models
 
         }
         public Cryptocurrency(string code) { PartitionKey = "cryptocurrency"; RowKey = code; }
-        public string Code { get; set; }
-        public decimal Rate { get; set; }
+        public double Value { get; set; }
     }
 }

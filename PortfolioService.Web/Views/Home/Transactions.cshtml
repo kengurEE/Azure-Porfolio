@@ -1,0 +1,31 @@
+﻿@using Common.Models; 
+<a href="/Home/AddTransaction">Dodaj</a>
+<div class="container" style="overflow-y:auto;height:500px;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Tip</th>
+                <th scope="col">Valuta</th>
+                <th scope="col">Cena</th>
+                <th scope="col">Količina</th>
+                <th scope="col">Vrednost</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (TransactionDto item in ViewBag.Transactions)
+            {
+                <tr>
+                    <td>@(item.IsInvest?"Uloženo":"Isplaćeno")</td>
+                    <td>@item.Currency</td>
+                    <td>@item.Price</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Quantity*item.Price)</td>
+                    <td>
+                        <a href="/Home/DeleteTransaction?id=@item.Id">Obriši</a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>

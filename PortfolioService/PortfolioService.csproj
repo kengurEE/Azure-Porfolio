@@ -49,6 +49,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,8 +59,10 @@
   <ItemGroup>
     <Compile Include="HealthMonitoring.cs" />
     <Compile Include="JobServer.cs" />
+    <Compile Include="PortfolioHelper.cs" />
     <Compile Include="PortfolioServiceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\TransactionRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
@@ -70,6 +73,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{68b4b043-6513-4df3-a45f-039c2d485a07}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CryptoService\CryptoService.csproj">
+      <Project>{f8d1d3a2-e80f-427b-8d56-ec5eb58d4e04}</Project>
+      <Name>CryptoService</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

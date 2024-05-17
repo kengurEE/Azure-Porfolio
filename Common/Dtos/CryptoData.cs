@@ -1,11 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common.Dtos
 {
     public class CryptoData
     {
-        public List<CryptoRate> Rates { get; set; }
+        public List<CryptoRate> rates { get; set; } = new List<CryptoRate>();
     }
 }

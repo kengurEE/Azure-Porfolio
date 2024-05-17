@@ -5,8 +5,8 @@ namespace Common.Helpers
 {
     public class MailHelper
     {
-        public const string From = "";
-        public const string Password = "";
+        public const string From = "mmanojlovic481@gmail.com";
+        public const string Password = "lktk nohg yiao ccda";
         public static void SendMail(string subject, string body, string to)
         {
             var mailMessage = new MailMessage

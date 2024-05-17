@@ -2,7 +2,7 @@
 {
     public class CryptoRate
     {
-        public decimal Rate { get; set; }
+        public double rate { get; set; }
         public string asset_id_quote { get; set; }
     }
 }

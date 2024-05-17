@@ -1,43 +1,49 @@
 @using Common.Models;
 <h3>Izmeni podatke</h3>
-<form method="post" action="/Login/RegistrationSubmit">
-    <div class="form-group">
-        <label>Ime</label>
-        <input  class="form-control" name="firstName" value="@((ViewData["user"] as UserDto).FirstName)"> 
-    </div>
-    <div class="form-group">
-        <label>Prezime</label>
-        <input  class="form-control" name="lastName"value="@((ViewData["user"] as UserDto).LastName)"> 
-    </div>
-    <div class="form-group">
-        <label>Adresa</label>
-        <input class="form-control" name="street" value="@((ViewData["user"] as UserDto).Street)"> 
-    </div>
-    <div class="form-group">
-        <label>Broj</label>
-        <input class="form-control" name="number" value="@((ViewData["user"] as UserDto).Number)"> 
-    </div>
-    <div class="form-group">
-        <label>Grad</label>
-        <input class="form-control" name="city" value="@((ViewData["user"] as UserDto).City)"> 
-    </div>
-    <div class="form-group">
-        <label>Zemlja</label>
-        <input class="form-control" name="Country" value="@((ViewData["user"] as UserDto).Country)"> 
-    </div>
-    <div class="form-group">
-        <label>Telefon</label>
-        <input class="form-control" name="Phone" value="@((ViewData["user"] as UserDto).Phone)"> 
-    </div>
-    <div class="form-group">
-        <label>Lozinka</label>
-        <input type="password" class="form-control" name="password"  >
-    </div> 
-    <div class="form-group">
-        <label>Slika</label>
-        <input type="file" class="form-control" name="file">
-    </div>
-    <img src="@((ViewData["user"] as UserDto).Image)"/>
-    <p style="color:red;">@ViewBag.ErrorMessage</p>
-    <button type="submit" class="btn btn-primary">Ažuriraj</button>
-</form>
+@using (Html.BeginForm("UpdateSubmit", "Login", FormMethod.Post, new
+{
+    enctype =
+    "multipart/form-data"
+}))
+{
+        <div class="form-group">
+            <label>Ime</label>
+            <input class="form-control" name="firstName" value="@((ViewData["user"] as UserDto).FirstName)">
+        </div>
+        <div class="form-group">
+            <label>Prezime</label>
+            <input class="form-control" name="lastName" value="@((ViewData["user"] as UserDto).LastName)">
+        </div>
+        <div class="form-group">
+            <label>Adresa</label>
+            <input class="form-control" name="street" value="@((ViewData["user"] as UserDto).Street)">
+        </div>
+        <div class="form-group">
+            <label>Broj</label>
+            <input class="form-control" name="number" value="@((ViewData["user"] as UserDto).Number)">
+        </div>
+        <div class="form-group">
+            <label>Grad</label>
+            <input class="form-control" name="city" value="@((ViewData["user"] as UserDto).City)">
+        </div>
+        <div class="form-group">
+            <label>Zemlja</label>
+            <input class="form-control" name="Country" value="@((ViewData["user"] as UserDto).Country)">
+        </div>
+        <div class="form-group">
+            <label>Telefon</label>
+            <input class="form-control" name="Phone" value="@((ViewData["user"] as UserDto).Phone)">
+            <input type="hidden" name="Email" value="@((ViewData["user"] as UserDto).Email)">
+        </div>
+        <div class="form-group">
+            <label>Lozinka</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+        <div class="form-group">
+            <label>Slika</label>
+            <input type="file" class="form-control" name="file">
+        </div>
+        <img width="200" src="@((ViewData["user"] as UserDto).Image)" />
+        <p style="color:red;">@ViewBag.ErrorMessage</p>
+        <button type="submit" class="btn btn-primary">Ažuriraj</button>
+}

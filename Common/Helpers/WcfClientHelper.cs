@@ -1,34 +1,20 @@
-﻿using System.Net.Http.Headers;
+﻿using Microsoft.WindowsAzure.ServiceRuntime;
+using System;
+using System.Net.Http.Headers;
 using System.ServiceModel;
 namespace Common.Helpers
 {
 
-    public static class WcfClientHelper<T>
+    public static class WcfClientHelper
     {
-        public static T Connect(Service service)
+        public static TService Connect<TService>(string serviceName, string route)
         {
-            var binding = new NetTcpBinding();
-            ChannelFactory<T> factory = new ChannelFactory<T>(binding, new EndpointAddress(ResolveAddress(service)));
+            Random random = new Random();
+            int instanceIndex = random.Next(RoleEnvironment.Roles[serviceName].Instances.Count - 1);
+            var endpoint = RoleEnvironment.Roles[serviceName].Instances[instanceIndex].InstanceEndpoints["InternalRequest"];
+            string fullEndpoint = string.Format("net.tcp://{0}/{1}", endpoint.IPEndpoint, route);
+            ChannelFactory<TService> factory = new ChannelFactory<TService>(new NetTcpBinding(), new EndpointAddress(fullEndpoint));
             return factory.CreateChannel();
         }
-        private static string ResolveAddress(Service service)
-        {
-            switch (service)
-            {
-                case Service.Portfolio:
-                    if (typeof(T) is IPortfolioService)
-                        return "net.tcp://127.255.0.5:10100/Portfolio";
-                    if (typeof(T) is IHealthMonitoring)
-                        return "net.tcp://127.255.0.5:10100/health-monitoring";
-                    break;
-                case Service.Notification:
-                    if (typeof(T) is IHealthMonitoring)
-                        return "net.tcp://127.255.0.5:10100/health-monitoring";
-                    break;
-
-            }
-            throw new System.Exception("Service address does not exists");
-        }
-
     }
 }

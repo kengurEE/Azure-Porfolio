@@ -14,11 +14,11 @@ namespace PortfolioService
         private string endPointName2 = "health-monitoring";
         public JobServer()
         {
-            RoleInstanceEndpoint inputEndPoint = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints[endPointName1];
+            RoleInstanceEndpoint inputEndPoint = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["InternalRequest"];
             string endpoint1 = string.Format("net.tcp://{0}/{1}", inputEndPoint.IPEndpoint, endPointName1);
             string endpoint2 = string.Format("net.tcp://{0}/{1}", inputEndPoint.IPEndpoint, endPointName2);
             serviceHost1 = new ServiceHost(typeof(PortfolioServiceProvider));
-            serviceHost1 = new ServiceHost(typeof(HealthMonitoring));
+            serviceHost2 = new ServiceHost(typeof(HealthMonitoring));
             NetTcpBinding binding = new NetTcpBinding();
             serviceHost1.AddServiceEndpoint(typeof(IPortfolioService), binding, endpoint1);
             serviceHost2.AddServiceEndpoint(typeof(IHealthMonitoring), binding, endpoint2);

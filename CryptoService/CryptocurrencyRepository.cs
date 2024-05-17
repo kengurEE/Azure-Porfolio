@@ -8,15 +8,15 @@ using System.Linq;
 
 namespace CryptoService
 {
-    public class CryptoRepository
+    public class CryptocurrencyRepository
     {
         private CloudStorageAccount _storageAccount;
         private CloudTable _table;
-        public CryptoRepository()
+        public CryptocurrencyRepository()
         {
             _storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("DataConnectionString"));
             CloudTableClient tableClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
-            _table = tableClient.GetTableReference("cryptocurrencies");
+            _table = tableClient.GetTableReference("cryptocurrency");
             _table.CreateIfNotExists();
         }
         public List<Cryptocurrency> GetAll()
@@ -29,10 +29,6 @@ namespace CryptoService
             _table.Execute(insertOperation);
         }
 
-        public Cryptocurrency Get(string key)
-        {
-            return GetAll().Where(p => p.RowKey == key).FirstOrDefault();
-        }
 
         public void Update(Cryptocurrency cryptocurrency)
         {

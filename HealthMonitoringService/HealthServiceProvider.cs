@@ -10,7 +10,7 @@ namespace HealthMonitoringService
 {
     public class HealthServiceProvider : IHealthService
     {
-        public List<HealthCheckDto> GetHealthChecks()
+        public HealthCheckReport GetHealthChecks()
         {
             HealthCheckRepository healthCheckRepository = new HealthCheckRepository();
             List<HealthCheck> healthChecks = healthCheckRepository.GetAll()
@@ -24,10 +24,17 @@ namespace HealthMonitoringService
                     Id = hc.RowKey,
                     IsHealth = hc.IsHealth,
                     ServiceName = hc.ServiceName,
-                    Timestamp = hc.Timestamp
+                    Timestamp = hc.Timestamp.DateTime
                 });
             }
-            return healthCheckDtos;
+            var notificationChecks = healthChecks.Where(x => x.ServiceName == "Notification").ToList();
+            var portfolioChecks = healthChecks.Where(x => x.ServiceName == "Portfolio").ToList();
+            return new HealthCheckReport
+            {
+                Notification = Math.Round((double)notificationChecks.Count(x => x.IsHealth) / notificationChecks.Count * 100, 2),
+                Portfolio = Math.Round((double)portfolioChecks.Count(x => x.IsHealth) / portfolioChecks.Count * 100, 2),
+                HealthChecks = healthCheckDtos.Take(50).ToList()
+            };
         }
     }
 }

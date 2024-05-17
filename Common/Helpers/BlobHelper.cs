@@ -4,6 +4,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.IO;
 using System.Text;
+using System.Web;
 
 namespace Common.Helpers
 {
@@ -18,7 +19,7 @@ namespace Common.Helpers
         }
         public string Download(string containerName, string blobName)
         {
-            CloudBlobContainer container = blobStorage.GetContainerReference(containerName);
+            CloudBlobContainer container = blobStorage.GetContainerReference("images");
             CloudBlockBlob blob = container.GetBlockBlobReference(blobName);
             string text = "";
             using (var stream = new MemoryStream())
@@ -28,15 +29,14 @@ namespace Common.Helpers
             }
             return text;
         }
-        public string Upload(string image, string containerName, string blobName)
+        public string Upload(HttpPostedFileBase file)
         {
-            CloudBlobContainer container = blobStorage.GetContainerReference(containerName);
-            CloudBlockBlob blob = container.GetBlockBlobReference(blobName);
-            using (var stream = new MemoryStream(Encoding.Default.GetBytes(image)))
-            {
-                blob.UploadFromStream(stream);
-                return blob.Uri.ToString();
-            }
+            CloudBlobContainer container = blobStorage.GetContainerReference("images");
+            CloudBlockBlob blob = container.GetBlockBlobReference(file.FileName.ToLower());
+            blob.Properties.ContentType = file.ContentType;
+            blob.UploadFromStream(file.InputStream);
+
+            return blob.Uri.ToString();
         }
     }
 }

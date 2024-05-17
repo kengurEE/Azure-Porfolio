@@ -1,0 +1,36 @@
+﻿@using Common.Models;
+@using Common.Dtos;
+<h3>Nova transakcija</h3>
+<form method="get" action="/Home/AddTransactionSubmit">
+    <div class="form-group">
+        <input type="radio" name="isInvest">
+        <label>Uplata</label>
+        <br/>
+        <input type="radio">
+        <label>Isplata</label>
+    </div>
+    <div class="form-group">
+        <label for="currency">Valuta</label>
+        <select name="currency" class="form-control">
+            @foreach (CryptocurrencyDto curr in ViewBag.Currencies)
+            {
+                <option value="@curr.Code">@curr.Code  @curr.Value</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Količina</label>
+        <input type="number" class="form-control"step="0.01" name="quantity">
+    </div>
+    <div class="form-group form-check">
+        <label for="price">Cena</label>
+        <div style="display:flex">
+
+            <input type="checkbox" name="useCurrentPrice">
+            <label for="currency">Koristi trenutnu cenu</label>
+        </div>
+        <input type="number" class="form-control" step="0.01"name="price">
+    </div>
+    <p style="color:red">@ViewBag.Message</p>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

@@ -1,6 +1,6 @@
 ﻿using Common.Contracts;
+using Common.Dtos;
 using Common.Helpers;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace HealthStatusService.Controllers
@@ -9,13 +9,11 @@ namespace HealthStatusService.Controllers
     {
         public ActionResult Index()
         {
-            IHealthService healthService = WcfClientHelper<IHealthService>.Connect(Service.HealthMonitoring);
-            var healthChecks = healthService.GetHealthChecks();
-            var notificationChecks = healthChecks.Where(x => x.ServiceName == "Notification").ToList();
-            var portfolioChecks = healthChecks.Where(x => x.ServiceName == "Portfolio").ToList();
-
-            ViewBag.Notification = notificationChecks.Count(x => x.IsHealth) / notificationChecks.Count * 100;
-            ViewBag.Portfolio = portfolioChecks.Count(x => x.IsHealth) / portfolioChecks.Count * 100;
+            IHealthService healthService = WcfClientHelper.Connect<IHealthService>("HealthMonitoringService", "HealthMonitor");
+            HealthCheckReport report = healthService.GetHealthChecks();
+            ViewBag.Portfolio = report.Portfolio;
+            ViewBag.Notification = report.Notification;
+            ViewBag.HealthChecks = report.HealthChecks;
             return View();
         }
 

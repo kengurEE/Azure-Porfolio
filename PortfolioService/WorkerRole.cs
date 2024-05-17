@@ -1,11 +1,14 @@
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Diagnostics;
+using Common;
+using Common.Models;
+using CryptoService;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Microsoft.WindowsAzure.Storage.Queue;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -64,8 +67,50 @@ namespace PortfolioService
             while (!cancellationToken.IsCancellationRequested)
             {
                 Trace.TraceInformation("Working");
-                await Task.Delay(1000);
+                CheckAlarmQueue();
+                await Task.Delay(10000);
             }
+        }
+
+        private void CheckAlarmQueue()
+        {
+
+
+            var queue = QueueHelper.GetQueueReference("alarm");
+            CloudQueueMessage message = queue.GetMessage();
+
+            while (message != null)
+            {
+                if (!string.IsNullOrEmpty(message.AsString))
+                {
+
+                    string[] alarmIds = message.AsString.Split('|');
+                    AlarmRepository alarmRepository = new AlarmRepository();
+                    TransactionRepository transactionRepository = new TransactionRepository();
+                    foreach (var alarmId in alarmIds)
+                    {
+                        Alarm alarm = alarmRepository.Get(alarmId);
+                        var portfolio = PortfolioHelper.GetPortfolio(alarm.Email);
+                        var portfolioItem = portfolio.Items.FirstOrDefault(x => x.Currency == alarm.Currency);
+                        if (portfolioItem != null)
+                        {
+
+                            Transaction transaction = new Transaction
+                            {
+                                User = alarm.Email,
+                                Currency = alarm.Currency,
+                                Quantity = portfolioItem.Quantity,
+                                Price = portfolioItem.Price,
+                                IsInvested = false,
+                            };
+                            transactionRepository.Add(transaction);
+                        }
+                    }
+                }
+                queue.DeleteMessage(message);
+                message = queue.GetMessage();
+            }
+
         }
     }
 }

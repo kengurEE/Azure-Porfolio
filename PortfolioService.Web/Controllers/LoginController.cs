@@ -10,6 +10,7 @@ namespace PortfolioService.Web.Controllers
 {
     public class LoginController : Controller
     {
+        IPortfolioService portfolioService = WcfClientHelper.Connect<IPortfolioService>("PortfolioService", "Portfolio");
         public ActionResult Index(string errorMessage)
         {
             ViewBag.ErrorMessage = errorMessage;
@@ -21,18 +22,24 @@ namespace PortfolioService.Web.Controllers
             ViewBag.ErrorMessage = errorMessage;
             return View();
         }
+        public ActionResult Logout()
+        {
+            Session["user"] = null;
+            return RedirectToAction("Index");
+        }
 
         public ActionResult Update(string errorMessage)
         {
+            if (Session["user"] == null)
+                return RedirectToAction("Index", "Login");
             ViewData["user"] = Session["user"];
             ViewBag.ErrorMessage = errorMessage;
             return View();
         }
         [HttpPost]
-        public ActionResult Login(string username, string password)
+        public ActionResult Login(string email, string password)
         {
-            IPortfolioService portfolioService = WcfClientHelper<IPortfolioService>.Connect(Service.Portfolio);
-            var user = portfolioService.Login(username, password);
+            var user = portfolioService.Login(email, password);
             if (user == null)
             {
                 return RedirectToAction("Index", new { errorMessage = "Pogrešni kredencijali" });
@@ -43,32 +50,23 @@ namespace PortfolioService.Web.Controllers
         [HttpPost]
         public ActionResult RegistrationSubmit(UserDto userDto, HttpPostedFileBase file)
         {
-
-            byte[] imageBytes = new byte[file.ContentLength];
-            using (BinaryReader theReader = new BinaryReader(file.InputStream))
+            if (file != null)
             {
-                imageBytes = theReader.ReadBytes(file.ContentLength);
+                BlobHelper blob = new BlobHelper();
+                userDto.Image = blob.Upload(file);
             }
-            BlobHelper blob = new BlobHelper();
-
-            userDto.Image = blob.Upload(Convert.ToBase64String(imageBytes), "images", Guid.NewGuid().ToString());
-
-            IPortfolioService portfolioService = WcfClientHelper<IPortfolioService>.Connect(Service.Portfolio);
             portfolioService.Register(userDto);
             return RedirectToAction("Index");
         }
         public ActionResult UpdateSubmit(UserDto userDto, HttpPostedFileBase file)
         {
-
-            byte[] imageBytes = new byte[file.ContentLength];
-            using (BinaryReader theReader = new BinaryReader(file.InputStream))
+            if (Session["user"] == null)
+                return RedirectToAction("Index", "Login");
+            if (file != null)
             {
-                imageBytes = theReader.ReadBytes(file.ContentLength);
+                BlobHelper blob = new BlobHelper();
+                userDto.Image = blob.Upload(file);
             }
-            BlobHelper blob = new BlobHelper();
-
-            userDto.Image = blob.Upload(Convert.ToBase64String(imageBytes), "images", Guid.NewGuid().ToString());
-            IPortfolioService portfolioService = WcfClientHelper<IPortfolioService>.Connect(Service.Portfolio);
             portfolioService.Update(userDto);
             return RedirectToAction("Update");
         }

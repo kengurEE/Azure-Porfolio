@@ -1,4 +1,6 @@
 using Common;
+using Common.Contracts;
+using Common.Helpers;
 using Common.Models;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using PortfolioService;
@@ -17,7 +19,7 @@ namespace HealthMonitoringService
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-
+        JobServer _JobServer = new JobServer();
         public override void Run()
         {
             Trace.TraceInformation("HealthMonitoringService is running");
@@ -34,6 +36,7 @@ namespace HealthMonitoringService
 
         public override bool OnStart()
         {
+            _JobServer.Open();
             // Set the maximum number of concurrent connections
             ServicePointManager.DefaultConnectionLimit = 12;
 
@@ -49,6 +52,7 @@ namespace HealthMonitoringService
 
         public override void OnStop()
         {
+            _JobServer.Close();
             Trace.TraceInformation("HealthMonitoringService is stopping");
 
             this.cancellationTokenSource.Cancel();
@@ -70,64 +74,46 @@ namespace HealthMonitoringService
                 bool healthPS;
                 try
                 {
-                    var notificationService = ConnectToPortfolioService();
-                    healthPS = notificationService.HealthCheck();
-                    healthCheckRepository.Add(new HealthCheck { IsHealth = healthPS, ServiceName = "Portfolio" });
+                    var portfolioService = WcfClientHelper.Connect<IHealthMonitoring>("PortfolioService", "health-monitoring"); ;
+                    healthPS = portfolioService.HealthCheck();
                 }
                 catch (Exception e)
                 {
                     healthPS = false;
 
                     Trace.TraceInformation(e.Message);
-                    healthCheckRepository.Add(new HealthCheck { IsHealth = healthPS, ServiceName = "Portfolio" });
 
                 }
+                healthCheckRepository.Add(new HealthCheck { Timestamp = DateTime.Now, IsHealth = healthPS, ServiceName = "Portfolio" });
                 if (!healthPS)
                     SendMail("Portfolio");
 
                 bool healthNS;
                 try
                 {
-                    var portfolioService = ConnectToNotificationService();
-                    healthNS = portfolioService.HealthCheck();
+                    var notificationService = WcfClientHelper.Connect<IHealthMonitoring>("NotificationService", "health-monitoring");
+
+                    healthNS = notificationService.HealthCheck();
                 }
                 catch (Exception e)
                 {
                     healthNS = false;
                     Trace.TraceInformation(e.Message);
                 }
-                healthCheckRepository.Add(new HealthCheck { IsHealth = healthNS, ServiceName = "Notification" });
+                healthCheckRepository.Add(new HealthCheck { Timestamp = DateTime.Now, IsHealth = healthNS, ServiceName = "Notification" });
                 if (!healthNS)
                     SendMail("Notification");
 
                 await Task.Delay(random.Next(1000, 5000));
             }
         }
-
+        MailRepository MailRepository = new MailRepository();
         private void SendMail(string serviceName)
         {
-            List<string> mails = MailStorage.Mails;
-            foreach (string mail in mails)
+            foreach (string mail in MailRepository.Get())
             {
-                //TODO: send mail
+                MailHelper.SendMail("Problem sa servisom", $"Servis {serviceName} trenutno nije dostupan", mail);
             }
-        }
-
-        public static IHealthMonitoring ConnectToPortfolioService()
-        {
-            var binding = new NetTcpBinding();
-            ChannelFactory<IHealthMonitoring> factory = new
-            ChannelFactory<IHealthMonitoring>(binding, new
-            EndpointAddress("net.tcp://127.255.0.5:10100/health-monitoring"));
-            return factory.CreateChannel();
-        }
-        public static IHealthMonitoring ConnectToNotificationService()
-        {
-            var binding = new NetTcpBinding();
-            ChannelFactory<IHealthMonitoring> factory = new
-            ChannelFactory<IHealthMonitoring>(binding, new
-            EndpointAddress("net.tcp://127.255.0.5:10100/health-monitoring"));
-            return factory.CreateChannel();
         }
     }
 }

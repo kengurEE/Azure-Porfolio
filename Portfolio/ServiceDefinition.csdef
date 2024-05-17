@@ -18,13 +18,13 @@
     <Certificates>
     </Certificates>
   </WebRole>
-  <WorkerRole name="PortfolioService" vmsize="Standard_D1_v2">
+  <WorkerRole name="PortfolioService" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="DataConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="Portfolio" protocol="tcp" port="10100" />
+      <InternalEndpoint name="InternalRequest" protocol="tcp" />
     </Endpoints>
   </WorkerRole>
   <WorkerRole name="NotificationService" vmsize="Small">
@@ -32,21 +32,23 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="DataConnectionString" />
     </ConfigurationSettings>
-    <Endpoints>
-      <InputEndpoint name="health-monitoring" protocol="tcp" port="10101" />
-    </Endpoints>
     <LocalResources>
     </LocalResources>
+    <Endpoints>
+      <InternalEndpoint name="InternalRequest" protocol="tcp" />
+    </Endpoints>
   </WorkerRole>
   <WorkerRole name="HealthMonitoringService" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="DataConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InternalEndpoint name="HealthMonitor" protocol="tcp" />
+      <InternalEndpoint name="InternalRequest" protocol="tcp" />
+      <InputEndpoint name="Input" protocol="tcp" port="10100" />
     </Endpoints>
   </WorkerRole>
-  <WebRole name="HealthStatusService" vmsize="Standard_D1_v2">
+  <WebRole name="HealthStatusService" vmsize="Small">
     <Sites>
       <Site name="Web">
         <Bindings>
@@ -56,6 +58,7 @@
     </Sites>
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="DataConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="8080" />

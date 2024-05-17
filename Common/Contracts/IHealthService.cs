@@ -13,6 +13,6 @@ namespace Common.Contracts
     public interface IHealthService
     {
         [OperationContract]
-        List<HealthCheckDto> GetHealthChecks();
+        HealthCheckReport GetHealthChecks();
     }
 }
