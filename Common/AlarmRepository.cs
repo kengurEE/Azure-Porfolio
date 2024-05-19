@@ -27,12 +27,12 @@ namespace Common
         {
             var alarms = _table.CreateQuery<Alarm>().Where(x => x.PartitionKey == "alarm").AsEnumerable().Where(x => x.Active).OrderBy(x => x.LastAccess).Take(20).ToList();
 
-            /*  foreach (var alarm in alarms)
-              {
-                  alarm.LastAccess = DateTime.Now;
-                  TableOperation updateOperation = TableOperation.Replace(alarm);
-                  _table.Execute(updateOperation);
-              }*/
+            foreach (var alarm in alarms)
+            {
+                alarm.LastAccess = DateTime.Now;
+                TableOperation updateOperation = TableOperation.Replace(alarm);
+                _table.Execute(updateOperation);
+            }
             return alarms;
         }
         public void Add(Alarm alarm)

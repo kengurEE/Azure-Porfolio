@@ -67,7 +67,9 @@ namespace HealthMonitoringService
         {
             Random random = new Random();
             HealthCheckRepository healthCheckRepository = new HealthCheckRepository();
-            // TODO: Replace the following with your own logic.
+
+            int instanceIndex = int.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
+            await Task.Delay(instanceIndex * 5000);
             while (!cancellationToken.IsCancellationRequested)
             {
                 Trace.TraceInformation("Working");
@@ -104,7 +106,7 @@ namespace HealthMonitoringService
                 if (!healthNS)
                     SendMail("Notification");
 
-                await Task.Delay(random.Next(1000, 5000));
+                await Task.Delay(2 * random.Next(1000, 5000));
             }
         }
         MailRepository MailRepository = new MailRepository();

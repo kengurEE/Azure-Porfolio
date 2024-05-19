@@ -32,7 +32,7 @@ namespace Common.Helpers
         public string Upload(HttpPostedFileBase file)
         {
             CloudBlobContainer container = blobStorage.GetContainerReference("images");
-            CloudBlockBlob blob = container.GetBlockBlobReference(file.FileName.ToLower());
+            CloudBlockBlob blob = container.GetBlockBlobReference(Guid.NewGuid().ToString() + file.FileName.ToLower());
             blob.Properties.ContentType = file.ContentType;
             blob.UploadFromStream(file.InputStream);
 

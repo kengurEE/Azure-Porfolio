@@ -76,7 +76,7 @@ namespace PortfolioService
         {
 
 
-            var queue = QueueHelper.GetQueueReference("alarm");
+            var queue = QueueHelper.GetQueueReference("alarmsdone");
             CloudQueueMessage message = queue.GetMessage();
 
             while (message != null)

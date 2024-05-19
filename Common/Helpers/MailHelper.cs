@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Mail;
 
 namespace Common.Helpers
@@ -9,21 +10,29 @@ namespace Common.Helpers
         public const string Password = "lktk nohg yiao ccda";
         public static void SendMail(string subject, string body, string to)
         {
-            var mailMessage = new MailMessage
+            try
             {
-                From = new MailAddress(From),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true,
-            };
-            mailMessage.To.Add(to);
-            var smtpClient = new SmtpClient("smtp.gmail.com")
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(From),
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = false,
+                };
+                mailMessage.To.Add(to);
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential(From, Password),
+                    EnableSsl = true,
+                };
+                smtpClient.Send(mailMessage);
+            }
+            catch (System.Exception e)
             {
-                Port = 587,
-                Credentials = new NetworkCredential(From, Password),
-                EnableSsl = true,
-            };
-            smtpClient.Send(mailMessage);
+                Trace.TraceError(e.Message);
+            }
         }
     }
 }

@@ -47,6 +47,7 @@ namespace NotificationService
 
             Trace.TraceInformation("NotificationService has been started");
 
+
             return result;
         }
 
@@ -65,13 +66,16 @@ namespace NotificationService
 
         private async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO: Replace the following with your own logic.
+
+
+            int instanceIndex = int.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
+            await Task.Delay(instanceIndex * 10000);
             while (!cancellationToken.IsCancellationRequested)
             {
                 Trace.TraceInformation("Working");
                 UpdateCryptocurrencyValues();
                 CheckAlarms();
-                await Task.Delay(10000);
+                await Task.Delay(30000);
             }
         }
         DateTime lastReq = DateTime.MinValue;
@@ -103,7 +107,7 @@ namespace NotificationService
                 }
             }
 
-            var queue = QueueHelper.GetQueueReference("alarm");
+            var queue = QueueHelper.GetQueueReference("alarmsdone");
             queue.AddMessage(new CloudQueueMessage(string.Join("|", alarmIds)));
         }
 
